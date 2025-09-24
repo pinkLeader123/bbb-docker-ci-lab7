@@ -28,9 +28,10 @@ jobs:
       # Build Docker image
       - name: Build Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/bbb-toolchain:latest
-          docker build -t $IMAGE_NAME .
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+            OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+            IMAGE_NAME=ghcr.io/$OWNER/bbb-toolchain:latest
+            docker build -t $IMAGE_NAME .
+            echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
       # Push Docker image
       - name: Push Docker image
