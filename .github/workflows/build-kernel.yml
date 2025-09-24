@@ -1,0 +1,26 @@
+name: Lab7 - Build Kernel inside Docker
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/bbb-toolchain:latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Clone kernel
+        run: |
+          git clone --depth=1 -b v6.1.46 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-kernel
+          cd linux-kernel
+          make O=build defconfig
+          make O=build -j$(nproc) zImage dtbs
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bbb-kernel
+          path: linux-kernel/build/arch/arm/boot/zImage
